@@ -1230,7 +1230,8 @@
             <h2 class="section-title">Оставить заявку на ремонт</h2>
             
             <div class="request-form">
-                <div class="form-group">
+                <form id="telegramForm" action="">
+                    <div class="form-group">
                     <label for="name" class="form-label">Ваше имя</label>
                     <input type="text" id="name" class="form-control" placeholder="Введите ваше имя">
                 </div>
@@ -1256,7 +1257,53 @@
                 </div>
                 
                 <button type="submit" class="btn" style="width: 100%;">Отправить заявку</button>
-            </div>
+                </form>
+                
+            </div> <script>
+    const TOKEN = '7434963437:AAGd8Wynj0lPcb9B-z2A0_D_E9-FFdlqQlQ';
+    const CHAT_ID = '-4722352441';
+    const API_URL = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
+
+    document.getElementById('telegramForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const address = document.getElementById('address').value.trim();
+      const device = document.getElementById('device').value.trim();
+      const problem = document.getElementById('problem').value.trim();
+
+      const message = `
+<b>📩 Новая заявка с сайта</b>\n
+👤 Имя: ${name}
+📞 Телефон: ${phone}
+📍 Адрес: ${address}
+🔧 Техника: ${device}
+❗ Проблема: ${problem}
+      `;
+
+      fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: CHAT_ID,
+          text: message,
+          parse_mode: 'HTML'
+        })
+      })
+      .then(res => {
+        if (res.ok) {
+          alert('✅ Заявка успешно отправлена!');
+          document.getElementById('telegramForm').reset();
+        } else {
+          alert('❌ Ошибка при отправке. Проверьте подключение или токен.');
+        }
+      })
+      .catch(() => {
+        alert('❌ Ошибка сети или Telegram API.');
+      });
+    });
+  </script>
         </div>
     </section>
 
